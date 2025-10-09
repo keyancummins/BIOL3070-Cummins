@@ -16,11 +16,11 @@ This research focused on analyzing Salt Lake County, Utah, to determine the host
 
 # BACKGROUND
 
-West Nile virus (WNV) is a mosquito-borne disease maintained in a transmission cycle between mosquitoes and birds, which act as hosts for the virus. Since being introduced to North America in 1999, WNV has become a major public health concern, especially in the areas around Salt Lake City. WNV is commonly found in mosquito populations in this area. Understanding which bird species mosquitoes feed on is essential for predicting where and how the virus spreads.
+West Nile virus (WNV) is a mosquito-borne disease maintained in a transmission cycle between mosquitoes and birds, which act as hosts for the virus. Since being introduced to North America in 1999, WNV has become a major public health concern, especially in the areas around Salt Lake City. WNV is commonly found in mosquito populations in this area [2]. Understanding which bird species mosquitoes feed on is essential for predicting where and how the virus spreads.
 
 Studying mosquito feeding is crucial for predicting WNV spread. The main focus is identifying the main carriers, or amplifying hosts. These amplifying hosts are birds that maintain high concentrations of virus in their blood (high viremia) long enough to infect mosquitoes that feed on them. Research shows that species like the House Finch are highly competent hosts because they sustain high viremia, making them important drivers of WNV transmission [1].
 
-To figure out which birds are fueling the WNV cycle in the Salt Lake City area, we used molecular techniques. We extracted DNA from the mosquito's blood meal and then used Polymerase Chain Reaction (PCR) to amplify a target gene. After PCR, we sequenced the amplified DNA and referenced it to a database to identify the host species. Using the data from the identified hosts and the WNV positivity rates in the local mosquito pools allows us to understand more clearly the transmission of WNV in these areas.
+Therefore, to understand and control local WNV transmission, it is essential to determine precisely which vertebrate hosts mosquitoes are feeding on. Researchers use molecular surveillance techniques to analyze mosquito blood meals. This typically involves DNA extraction to isolate host genetic material, followed by PCR (Polymerase Chain Reaction) to specifically amplify a short, identifiable segment of that host's DNA. Finally, the amplified DNA is analyzed through sequencing or other methods and compared to databases to identify the precise species, allowing for a targeted assessment of the risks posed by different species in the local environment.
 
 
 ```{r viremia, include=TRUE, eval=TRUE, warning=FALSE, fig.align='left', fig.width=4.75, fig.height=7}
@@ -71,10 +71,12 @@ The House Finch will be acting as the most common amplifying host of WNV in Salt
 Locations where mosquitoes have taken blood meals from House Finches will also exhibit higher rates of WNV-positive mosquito pools compared to locations with less House Finch blood meals.
 
 # METHODS
-The objective was to identify host species associated with increased West Nile virus (WNV) transmission risk in Salt Lake City. Mosquito blood meal host data from various sites were analyzed, with each site classified as either WNV-negative (loc_positives = 0) or WNV-positive (loc_positives = 1).
+To figure out which birds are fueling the WNV cycle in the Salt Lake City area, we used molecular techniques. We extracted DNA from the mosquito's blood meal from multiple locations and then used Polymerase Chain Reaction (PCR) to amplify a target gene. After PCR, we sequenced the amplified DNA and referenced it to a database to identify the host species. Using the data from the identified hosts and the WNV positivity rates in the local mosquito pools helps us to understand more clearly the transmission of WNV in these areas.
+
+The objective was to identify host species associated with increased West Nile virus (WNV) transmission risk in Salt Lake City. Mosquito blood meal host data from various sites were analyzed, with each site classified as either WNV-negative or WNV-positive.
 
 ## 1st Analysis (Barplots)
-We calculated the total count of blood meals taken from each host species, aggregating the counts separately for all WNV-negative locations and all WNV-positive locations. This comparison was visualized using horizontal barplots to compare host feeding patterns directly. The barplots allowed us to visually assess if any specific host was disproportionately targeted by mosquitoes in WNV-positive areas.
+We counted the total number of blood meals taken from each host species. We added the counts separately for WNV-negative and WNV-positive locations. We visualized this comparison using horizontal bar plots to show host feeding patterns directly. The bar plots helped us see if any specific host was targeted more by mosquitoes in WNV-positive areas.
 
 ```{r first-analysis, warning=FALSE}
 ## import counts_matrix: data.frame with column 'loc_positives' (0/1) and host columns 'host_*'
@@ -168,7 +170,7 @@ par(op)
 host_species_colors <- species_colors
 ```
 ## 2nd Analysis (Generalized Linear Model)
-To formally test the relationship suggested by the barplots, we performed a Generalized Linear Model (GLM) using the number of House Finch blood meals as the independent variable. We ran two separate models: one using the binary presence of WNV (loc_positives) as the response variable (using a binomial family) and a second using the WNV positivity rate (loc_rate) as the response variable (using a Gaussian family). This statistical test provided a formal p-value to evaluate the significance and strength of the House Finch as a predictor of WNV risk.
+To formally test the relationship shown in the barplots, we performed a Generalized Linear Model (GLM) with the number of House Finch blood meals as the independent variable. We ran two separate models. The first model used the binary presence of WNV (loc_positives) as the response variable with a binomial family. The second model used the WNV positivity rate (loc_rate) as the response variable with a Gaussian family. This statistical test gave us a formal p-value to assess the significance and strength of the House Finch as a predictor of WNV risk.
 
 ```{r}
 # second-analysis-or-plot, glm with house finch alone against binary +/_
@@ -185,20 +187,24 @@ summary(glm2)
 
 # DISCUSSION
 
-## Interpretation of 1st analysis (e.g. barplots)
-The first analysis, presented as a pair of barplots, summarized the total blood meals by host species across WNV-negative and WNV-positive collection sites. The results clearly showed that House Finch and American Robin were the most frequent blood meal hosts overall. Crucially, in the WNV-positive locations (WNV+), the House Finch was overwhelmingly the dominant host, with blood meal counts noticeably higher than any other species and higher than the counts observed in the WNV-negative locations. This visualization strongly suggests that the House Finch is the key host linking mosquito feeding activity to WNV transmission in the sampled locations.
+## Interpretation of 1st analysis (Barplots)
+The first analysis, shown as a pair of bar charts, summarized the total blood meals by host species at WNV-negative and WNV-positive collection sites. The results showed that House Finch and American Robin were the most common blood meal hosts overall. In the WNV-positive locations (WNV+), the House Finch stood out as the main host, with blood meal counts much higher than any other species and higher than those seen in the WNV-negative locations. This visualization suggests that the House Finch is the main host connecting mosquito feeding activity to WNV transmission in the sampled areas.
 
-## Interpretation of 2nd analysis (e.g. generalized linear model)
-The second analysis, a generalized linear model, provided statistical confirmation of the pattern observed in the barplots. The model testing the binary presence of WNV (loc_positives∼host_House_finch) resulted in a significant positive coefficient for House Finch (p=0.0287). This means that sites with more House Finch blood meals were significantly more likely to have WNV-positive mosquito pools. Furthermore, the model testing the WNV positivity rate (loc_rate∼host_House_finch) also showed a highly significant positive relationship (p=4.54×10^−5). This indicates that an increase in House Finch blood meals leads to a statistically significant increase in the WNV infection rate at a location. Both models support the hypothesis that House Finches are critical drivers of WNV transmission.
+A limitation of these bar plots is that they only show raw feeding counts, not host availability. The high number of House Finch blood meals in WNV+ sites might just be because there are more House Finches living there. Because we didn't measure the population of each bird species, the bar plots alone can't prove that mosquitoes are preferentially targeting House Finches.
 
-However, a limitation of this study is its correlational nature. While the strong statistical relationship suggests that the House Finch is a key amplifying host, the analysis does not prove direct causation; unmeasured confounding factors (such as local environmental differences in habitat quality or microclimate) could simultaneously influence both the mosquito feeding preference and the rate of WNV amplification.
+## Interpretation of 2nd analysis (Generalized Linear Model)
+The second analysis, a generalized linear model, confirmed the pattern seen in the barplots with statistics. The model that tested whether WNV was present showed a significant positive result for House Finch (p=0.0287). This indicates that locations with more House Finch blood meals were much more likely to have WNV-positive mosquito pools. Also, the model that examined the WNV positivity rate found a highly significant positive relationship (p=4.54×10^−5). This means that more House Finch blood meals lead to a statistically significant rise in the WNV infection rate at a location. Both models support the idea that House Finches play a key role in spreading WNV.
+
+However, a limitation of this study is its correlational nature. While the strong statistical relationship suggests that the House Finch is a key host, the analysis does not prove direct causation. Unmeasured confounding factors, such as local environmental differences in habitat quality or hosts available to feed on, could influence both the mosquito feeding preference and the rate of WNV amplification at the same time.
 
 # CONCLUSION
-The overall answer to the research question is that the House Finch is likely the most important amplifying host for West Nile virus in Salt Lake City, Utah. The evidence robustly supports the hypothesis, demonstrating that the abundance of House Finch blood meals is a significant positive predictor of WNV presence and positivity rate at a mosquito collection site. This finding is consistent with biological data showing House Finches maintain a high, prolonged viremia [1], confirming their role as a key amplifying host necessary for the virus to spread efficiently through the mosquito population in the Salt Lake City area. Future public health interventions should leverage this finding by prioritizing mosquito control efforts in areas with dense House Finch populations.
+The conclusion we found for the research question is that the House Finch is likely the most important host for West Nile virus in Salt Lake City, Utah. The evidence strongly supports the hypothesis, showing that the number of House Finch blood meals is a significant positive predictor of WNV presence and positivity rate at a mosquito collection site. This finding aligns with biological data indicating that House Finches maintain a high viremia [1], confirming their role as a key host needed for the virus to spread effectively through the mosquito population in the Salt Lake City area. Public health measures should use this finding to prioritize mosquito control efforts in areas with large House Finch populations.
 
 # REFERENCES     
 1. Komar N, Langevin S, Hinten S, Nemeth N, Edwards E, Hettler D, Davis B, Bowen R, Bunning M. Experimental infection of North American birds with the New York 1999 strain of West Nile virus. Emerg Infect Dis. 2003 Mar;9(3):311-22. https://doi.org/10.3201/eid0903.020628
 
-2. ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions such as plot() and to correct syntax errors. Accessed `r Sys.Date()`.
+2. Salt Lake County Health Department. (n.d.). West Nile virus detected in multiple mosquito samples in Salt Lake County. Retrieved from https://www.saltlakecounty.gov/health/news/west-nile-virus-detected-in-multiple-mosquito-samples-in-salt-lake-county/ 
 
-3. https://www.saltlakecounty.gov/health/news/west-nile-virus-detected-in-multiple-mosquito-samples-in-salt-lake-county/
+3. ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions such as plot() and to correct syntax errors. Accessed `r Sys.Date()`.
+
+4. Google. (2025). Gemini (version Oct 2025). Tool used for quick fixes, editing grammar and flow of text, and checking all rubric requirements were met.
