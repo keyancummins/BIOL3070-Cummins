@@ -1,0 +1,131 @@
+Group Project
+================
+Keyan Cummins
+2025-10-29
+
+- [ABSTRACT](#abstract)
+- [BACKGROUND](#background)
+- [STUDY QUESTION and HYPOTHESIS](#study-question-and-hypothesis)
+  - [Questions](#questions)
+  - [Hypothesis](#hypothesis)
+  - [Prediction](#prediction)
+- [METHODS](#methods)
+  - [1st Analysis](#1st-analysis)
+  - [2nd Analysis](#2nd-analysis)
+- [DISCUSSION](#discussion)
+  - [Interpretation of 1st analysis](#interpretation-of-1st-analysis)
+  - [Interpretation of 2nd analysis](#interpretation-of-2nd-analysis)
+- [CONCLUSION](#conclusion)
+- [REFERENCES](#references)
+
+# ABSTRACT
+
+# BACKGROUND
+
+``` r
+# Load the data
+air_data <- data.frame(
+  State = c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"),
+  Poor_Air = c(0.27, 0.12, 0.33, 0.3, 0.46, 0.25, 0.22, 0.31, 0.24, 0.3, 0.03, 0.28, 0.34, 0.25, 0.27, 0.29, 0.23, 0.29, 0.08, 0.19, 0.23, 0.24, 0.14, 0.31, 0.22, 0.19, 0.1, 0.25, 0.1, 0.27, 0.22, 0.16, 0.2, 0.17, 0.25, 0.34, 0.29, 0.31, 0.16, 0.25, 0.15, 0.23, 0.33, 0.29, 0.13, 0.12, 0.24, 0.16, 0.2, 0.15),
+  Asthma = c(9.6, 10.7, 9.7, 10.5, 8.7, 10.8, 12.4, 9.9, 9.3, 9.6, 9.1, 11.1, 8.7, 11, 9.7, 10.7, 10.8, 10, 13.1, 10.4, 11.3, 11.9, 9.9, 9.4, 10.4, 11.7, 8.1, 10.1, 13.1, 8.9, 10.4, 10.3, 9.2, 10.4, 11.4, 12.3, 11.5, 10.1, 13.3, 9, 8.3, 11.7, 7.9, 11, 12.9, 9.9, 10.9, 12.9, 10.9, 10.5)
+)
+```
+
+``` r
+# Scatter plot with regression line and statistics
+plot(air_data$Poor_Air, air_data$Asthma,
+     xlab = "Proportion of Poor Air Quality Days",
+     ylab = "Asthma Rate (%)",
+     main = "Air Quality vs Asthma Rates by State",
+     pch = 16, col = "blue", cex = 1.2)
+
+# Add regression line
+model <- lm(Asthma ~ Poor_Air, data = air_data)
+abline(model, col = "red", lwd = 2)
+
+# Calculate statistics
+correlation <- cor(air_data$Poor_Air, air_data$Asthma)
+r_squared <- summary(model)$r.squared
+p_value <- summary(model)$coefficients[2,4]
+
+# Add statistics to plot
+legend("topright", 
+       legend = c(paste("Correlation:", round(correlation, 3)),
+                  paste("R-squared:", round(r_squared, 3)),
+                  paste("p-value:", round(p_value, 4))),
+       bty = "n")
+```
+
+![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+``` r
+# Print statistics to console
+cat("=== REGRESSION STATISTICS ===\n")
+```
+
+    ## === REGRESSION STATISTICS ===
+
+``` r
+cat("Correlation:", round(correlation, 3), "\n")
+```
+
+    ## Correlation: -0.279
+
+``` r
+cat("R-squared:", round(r_squared, 3), "\n")
+```
+
+    ## R-squared: 0.078
+
+``` r
+cat("p-value:", round(p_value, 4), "\n")
+```
+
+    ## p-value: 0.0497
+
+``` r
+cat("Regression equation: Asthma =", 
+    round(coef(model)[1], 2), "+", 
+    round(coef(model)[2], 2), "* Poor_Air\n")
+```
+
+    ## Regression equation: Asthma = 11.56 + -4.59 * Poor_Air
+
+# STUDY QUESTION and HYPOTHESIS
+
+## Questions
+
+Does air quality effect the prevalence of asthma per state?
+
+## Hypothesis
+
+The states with the highest amounts of poor air quality days will also
+have higher prevalence of asthma.
+
+## Prediction
+
+California will have the highest prevelance of asthma because of its’
+high amounts of poor air quality days.
+
+# METHODS
+
+## 1st Analysis
+
+## 2nd Analysis
+
+# DISCUSSION
+
+## Interpretation of 1st analysis
+
+## Interpretation of 2nd analysis
+
+# CONCLUSION
+
+# REFERENCES
+
+3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
+    such as plot() and to correct syntax errors. Accessed 2025-10-29.
+
+4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
+    fixes, editing grammar and flow of text, and checking all rubric
+    requirements were met.
