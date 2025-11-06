@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-10-29
+2025-11-06
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -9,7 +9,7 @@ Keyan Cummins
   - [Questions](#questions)
   - [Hypothesis](#hypothesis)
   - [Prediction](#prediction)
-- [METHODS](#methods)
+- [METHODS/RESULTS](#methodsresults)
   - [1st Analysis](#1st-analysis)
   - [2nd Analysis](#2nd-analysis)
 - [DISCUSSION](#discussion)
@@ -32,64 +32,60 @@ air_data <- data.frame(
 ```
 
 ``` r
-# Scatter plot with regression line and statistics
-plot(air_data$Poor_Air, air_data$Asthma,
-     xlab = "Proportion of Poor Air Quality Days",
-     ylab = "Asthma Rate (%)",
-     main = "Air Quality vs Asthma Rates by State",
-     pch = 16, col = "blue", cex = 1.2)
+# Use the existing air_data from our environment
+# Convert to appropriate format and calculate percentages
+df <- data.frame(
+  State = air_data$State,
+  asthma_pct = air_data$Asthma,
+  poor_air_pct = air_data$Poor_Air * 100  # Convert proportion to percentage
+)
 
-# Add regression line
-model <- lm(Asthma ~ Poor_Air, data = air_data)
-abline(model, col = "red", lwd = 2)
+# Sort by asthma percentage (descending)
+df <- df[order(-df$asthma_pct), ]
 
-# Calculate statistics
-correlation <- cor(air_data$Poor_Air, air_data$Asthma)
-r_squared <- summary(model)$r.squared
-p_value <- summary(model)$coefficients[2,4]
+# Set up plotting parameters
+par(mar = c(5, 10, 4, 6))  # Adjust margins for state names
+y_pos <- 1:nrow(df)  # Y positions for bars
 
-# Add statistics to plot
-legend("topright", 
-       legend = c(paste("Correlation:", round(correlation, 3)),
-                  paste("R-squared:", round(r_squared, 3)),
-                  paste("p-value:", round(p_value, 4))),
+# Create empty plot
+plot(0, 0, type = "n", 
+     xlim = c(0, 50), 
+     ylim = c(0.5, nrow(df) + 0.5),
+     xlab = "Percent", 
+     ylab = "",
+     main = "Adults with Current Asthma vs. Poor-Air Days by State\n(Ranked by Asthma %)",
+     yaxt = "n")  # No default y-axis
+
+# Add asthma bars (blue)
+barplot_height <- df$asthma_pct
+rect(xleft = 0, ybottom = y_pos - 0.3, 
+     xright = barplot_height, ytop = y_pos + 0.3,
+     col = "lightblue", border = NA)
+
+# Add air quality bars (red) - offset slightly
+barplot_height_air <- df$poor_air_pct
+rect(xleft = 0, ybottom = y_pos - 0.3 + 0.6, 
+     xright = barplot_height_air, ytop = y_pos + 0.3 + 0.6,
+     col = "lightcoral", border = NA)
+
+# Add state names
+axis(2, at = y_pos, labels = df$State, las = 1, cex.axis = 0.6)
+
+# Add legend
+legend("bottomright", 
+       legend = c("Adults with Current Asthma (%)", "Poor Air Quality Days (%)"),
+       fill = c("lightblue", "lightcoral"),
+       cex = 0.8,
        bty = "n")
 ```
 
-![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-``` r
-# Print statistics to console
-cat("=== REGRESSION STATISTICS ===\n")
-```
-
-    ## === REGRESSION STATISTICS ===
-
-``` r
-cat("Correlation:", round(correlation, 3), "\n")
-```
-
-    ## Correlation: -0.279
-
-``` r
-cat("R-squared:", round(r_squared, 3), "\n")
-```
-
-    ## R-squared: 0.078
-
-``` r
-cat("p-value:", round(p_value, 4), "\n")
-```
-
-    ## p-value: 0.0497
-
-``` r
-cat("Regression equation: Asthma =", 
-    round(coef(model)[1], 2), "+", 
-    round(coef(model)[2], 2), "* Poor_Air\n")
-```
-
-    ## Regression equation: Asthma = 11.56 + -4.59 * Poor_Air
+<figure>
+<img
+src="RMarkdown-Group-Project_files/figure-gfm/asthma-ranked-bars-1.png"
+alt="Adults with Current Asthma vs. Poor-Air Days by State (ranked by Asthma %)" />
+<figcaption aria-hidden="true">Adults with Current Asthma vs. Poor-Air
+Days by State (ranked by Asthma %)</figcaption>
+</figure>
 
 # STUDY QUESTION and HYPOTHESIS
 
@@ -107,11 +103,144 @@ have higher prevalence of asthma.
 California will have the highest prevelance of asthma because of its’
 high amounts of poor air quality days.
 
-# METHODS
+# METHODS/RESULTS
 
 ## 1st Analysis
 
+``` r
+## 1st Analysis: Linear Regression - Air Quality vs Asthma Rates
+
+# Scatter plot with regression line
+plot(air_data$Poor_Air, air_data$Asthma,
+     xlab = "Proportion of Poor Air Quality Days",
+     ylab = "Asthma Rate (%)",
+     main = "Air Quality vs Asthma Rates by State",
+     pch = 16, col = "blue", cex = 1.2)
+
+# Add regression line
+model <- lm(Asthma ~ Poor_Air, data = air_data)
+abline(model, col = "red", lwd = 2)
+
+# Calculate statistics
+correlation <- cor(air_data$Poor_Air, air_data$Asthma)
+r_squared <- summary(model)$r.squared
+p_value <- summary(model)$coefficients[2,4]
+
+# Create comprehensive results table
+regression_stats <- data.frame(
+  Statistic = c("Correlation Coefficient", "R-squared", "Adjusted R-squared", 
+                "Overall Model p-value", "Regression p-value", "Observations"),
+  Value = c(round(correlation, 3),
+            round(r_squared, 3),
+            round(summary(model)$adj.r.squared, 3),
+            round(pf(summary(model)$fstatistic[1], summary(model)$fstatistic[2], 
+                     summary(model)$fstatistic[3], lower.tail = FALSE), 4),
+            round(p_value, 4),
+            nrow(air_data))
+)
+
+# Display model statistics
+knitr::kable(regression_stats, caption = "Linear Regression Model Summary")
+```
+
+| Statistic               |   Value |
+|:------------------------|--------:|
+| Correlation Coefficient | -0.2790 |
+| R-squared               |  0.0780 |
+| Adjusted R-squared      |  0.0590 |
+| Overall Model p-value   |  0.0497 |
+| Regression p-value      |  0.0497 |
+| Observations            | 50.0000 |
+
+Linear Regression Model Summary
+
+``` r
+# Create coefficients table
+coefficients_table <- data.frame(
+  Term = c("Intercept", "Poor Air Quality"),
+  Estimate = c(round(coef(model)[1], 3), round(coef(model)[2], 3)),
+  Std_Error = c(round(summary(model)$coefficients[1,2], 3), 
+                round(summary(model)$coefficients[2,2], 3)),
+  t_value = c(round(summary(model)$coefficients[1,3], 3), 
+              round(summary(model)$coefficients[2,3], 3)),
+  p_value = c(round(summary(model)$coefficients[1,4], 4), 
+              round(summary(model)$coefficients[2,4], 4))
+)
+
+knitr::kable(coefficients_table, caption = "Regression Coefficients")
+```
+
+|             | Term             | Estimate | Std_Error | t_value | p_value |
+|:------------|:-----------------|---------:|----------:|--------:|--------:|
+| (Intercept) | Intercept        |   11.560 |     0.554 |  20.873 |  0.0000 |
+| Poor_Air    | Poor Air Quality |   -4.592 |     2.281 |  -2.013 |  0.0497 |
+
+Regression Coefficients
+
+``` r
+# Add clean statistics to plot
+legend("topright", 
+       legend = c(paste("r =", round(correlation, 3)),
+                  paste("R² =", round(r_squared, 3)),
+                  paste("p =", ifelse(p_value < 0.001, "< 0.001", round(p_value, 3)))),
+       bty = "n", cex = 0.9)
+```
+
+![](RMarkdown-Group-Project_files/figure-gfm/scatter%20plot-1.png)<!-- -->
+
 ## 2nd Analysis
+
+``` r
+## 2nd Analysis: T-test comparing asthma rates between high and low pollution states
+
+# Create a new variable for pollution level based on the median of Poor_Air
+air_data$Pollution_Level <- ifelse(air_data$Poor_Air > median(air_data$Poor_Air), "High", "Low")
+air_data$Pollution_Level <- factor(air_data$Pollution_Level)
+
+# Perform an independent two-sample t-test
+t_test_result <- t.test(Asthma ~ Pollution_Level, data = air_data)
+
+# Calculate group means
+group_means <- tapply(air_data$Asthma, air_data$Pollution_Level, mean)
+
+# Create a results table
+results_table <- data.frame(
+  Statistic = c("High Pollution Mean", "Low Pollution Mean", 
+                "t-statistic", "p-value", "95% CI Lower", "95% CI Upper"),
+  Value = c(round(group_means["High"], 2),
+            round(group_means["Low"], 2),
+            round(t_test_result$statistic, 3),
+            round(t_test_result$p.value, 4),
+            round(t_test_result$conf.int[1], 3),
+            round(t_test_result$conf.int[2], 3))
+)
+
+# Display the table
+knitr::kable(results_table, caption = "T-Test Results: Asthma Rates by Pollution Level")
+```
+
+| Statistic           |   Value |
+|:--------------------|--------:|
+| High Pollution Mean | 10.0700 |
+| Low Pollution Mean  | 10.8800 |
+| t-statistic         | -2.2740 |
+| p-value             |  0.0276 |
+| 95% CI Lower        | -1.5300 |
+| 95% CI Upper        | -0.0940 |
+
+T-Test Results: Asthma Rates by Pollution Level
+
+``` r
+# Create a boxplot to visualize the difference
+boxplot(Asthma ~ Pollution_Level, 
+        data = air_data,
+        main = "Asthma Rates by Pollution Level",
+        xlab = "Pollution Level", 
+        ylab = "Asthma Rate (%)",
+        col = c("lightgreen", "salmon"))
+```
+
+![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 # DISCUSSION
 
@@ -124,7 +253,7 @@ high amounts of poor air quality days.
 # REFERENCES
 
 3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-10-29.
+    such as plot() and to correct syntax errors. Accessed 2025-11-06.
 
 4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
     fixes, editing grammar and flow of text, and checking all rubric

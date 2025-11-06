@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # BACKGROUND
 
 
-```{r}
+```{r data}
 # Load the data
 air_data <- data.frame(
   State = c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"),
@@ -24,8 +24,76 @@ air_data <- data.frame(
 )
 ```
 
-```{r}
-# Scatter plot with regression line and statistics
+```{r asthma-ranked-bars, echo=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=12, fig.cap="Adults with Current Asthma vs. Poor-Air Days by State (ranked by Asthma %)"}
+# Use the existing air_data from our environment
+# Convert to appropriate format and calculate percentages
+df <- data.frame(
+  State = air_data$State,
+  asthma_pct = air_data$Asthma,
+  poor_air_pct = air_data$Poor_Air * 100  # Convert proportion to percentage
+)
+
+# Sort by asthma percentage (descending)
+df <- df[order(-df$asthma_pct), ]
+
+# Set up plotting parameters
+par(mar = c(5, 10, 4, 6))  # Adjust margins for state names
+y_pos <- 1:nrow(df)  # Y positions for bars
+
+# Create empty plot
+plot(0, 0, type = "n", 
+     xlim = c(0, 50), 
+     ylim = c(0.5, nrow(df) + 0.5),
+     xlab = "Percent", 
+     ylab = "",
+     main = "Adults with Current Asthma vs. Poor-Air Days by State\n(Ranked by Asthma %)",
+     yaxt = "n")  # No default y-axis
+
+# Add asthma bars (blue)
+barplot_height <- df$asthma_pct
+rect(xleft = 0, ybottom = y_pos - 0.3, 
+     xright = barplot_height, ytop = y_pos + 0.3,
+     col = "lightblue", border = NA)
+
+# Add air quality bars (red) - offset slightly
+barplot_height_air <- df$poor_air_pct
+rect(xleft = 0, ybottom = y_pos - 0.3 + 0.6, 
+     xright = barplot_height_air, ytop = y_pos + 0.3 + 0.6,
+     col = "lightcoral", border = NA)
+
+# Add state names
+axis(2, at = y_pos, labels = df$State, las = 1, cex.axis = 0.6)
+
+# Add legend
+legend("bottomright", 
+       legend = c("Adults with Current Asthma (%)", "Poor Air Quality Days (%)"),
+       fill = c("lightblue", "lightcoral"),
+       cex = 0.8,
+       bty = "n")
+```
+
+
+
+# STUDY QUESTION and HYPOTHESIS
+
+## Questions  
+Does air quality effect the prevalence of asthma per state?
+
+## Hypothesis 
+The states with the highest amounts of poor air quality days will also have higher prevalence of asthma.
+  
+## Prediction
+California will have the highest prevelance of asthma because of its' high amounts of poor air quality days. 
+
+# METHODS/RESULTS
+
+
+## 1st Analysis 
+
+```{r scatter plot}
+## 1st Analysis: Linear Regression - Air Quality vs Asthma Rates
+
+# Scatter plot with regression line
 plot(air_data$Poor_Air, air_data$Asthma,
      xlab = "Proportion of Poor Air Quality Days",
      ylab = "Asthma Rate (%)",
@@ -41,48 +109,83 @@ correlation <- cor(air_data$Poor_Air, air_data$Asthma)
 r_squared <- summary(model)$r.squared
 p_value <- summary(model)$coefficients[2,4]
 
-# Add statistics to plot
+# Create comprehensive results table
+regression_stats <- data.frame(
+  Statistic = c("Correlation Coefficient", "R-squared", "Adjusted R-squared", 
+                "Overall Model p-value", "Regression p-value", "Observations"),
+  Value = c(round(correlation, 3),
+            round(r_squared, 3),
+            round(summary(model)$adj.r.squared, 3),
+            round(pf(summary(model)$fstatistic[1], summary(model)$fstatistic[2], 
+                     summary(model)$fstatistic[3], lower.tail = FALSE), 4),
+            round(p_value, 4),
+            nrow(air_data))
+)
+
+# Display model statistics
+knitr::kable(regression_stats, caption = "Linear Regression Model Summary")
+
+# Create coefficients table
+coefficients_table <- data.frame(
+  Term = c("Intercept", "Poor Air Quality"),
+  Estimate = c(round(coef(model)[1], 3), round(coef(model)[2], 3)),
+  Std_Error = c(round(summary(model)$coefficients[1,2], 3), 
+                round(summary(model)$coefficients[2,2], 3)),
+  t_value = c(round(summary(model)$coefficients[1,3], 3), 
+              round(summary(model)$coefficients[2,3], 3)),
+  p_value = c(round(summary(model)$coefficients[1,4], 4), 
+              round(summary(model)$coefficients[2,4], 4))
+)
+
+knitr::kable(coefficients_table, caption = "Regression Coefficients")
+
+# Add clean statistics to plot
 legend("topright", 
-       legend = c(paste("Correlation:", round(correlation, 3)),
-                  paste("R-squared:", round(r_squared, 3)),
-                  paste("p-value:", round(p_value, 4))),
-       bty = "n")
-
-# Print statistics to console
-cat("=== REGRESSION STATISTICS ===\n")
-cat("Correlation:", round(correlation, 3), "\n")
-cat("R-squared:", round(r_squared, 3), "\n")
-cat("p-value:", round(p_value, 4), "\n")
-cat("Regression equation: Asthma =", 
-    round(coef(model)[1], 2), "+", 
-    round(coef(model)[2], 2), "* Poor_Air\n")
+       legend = c(paste("r =", round(correlation, 3)),
+                  paste("R² =", round(r_squared, 3)),
+                  paste("p =", ifelse(p_value < 0.001, "< 0.001", round(p_value, 3)))),
+       bty = "n", cex = 0.9)
 ```
 
-
-# STUDY QUESTION and HYPOTHESIS
-
-## Questions  
-Does air quality effect the prevalence of asthma per state?
-
-## Hypothesis 
-The states with the highest amounts of poor air quality days will also have higher prevalence of asthma.
-  
-## Prediction
-California will have the highest prevelance of asthma because of its' high amounts of poor air quality days. 
-
-# METHODS
-
-
-## 1st Analysis 
-
-```{r first-analysis, warning=FALSE}
-
-```
 ## 2nd Analysis 
 
 ```{r}
+## 2nd Analysis: T-test comparing asthma rates between high and low pollution states
 
+# Create a new variable for pollution level based on the median of Poor_Air
+air_data$Pollution_Level <- ifelse(air_data$Poor_Air > median(air_data$Poor_Air), "High", "Low")
+air_data$Pollution_Level <- factor(air_data$Pollution_Level)
+
+# Perform an independent two-sample t-test
+t_test_result <- t.test(Asthma ~ Pollution_Level, data = air_data)
+
+# Calculate group means
+group_means <- tapply(air_data$Asthma, air_data$Pollution_Level, mean)
+
+# Create a results table
+results_table <- data.frame(
+  Statistic = c("High Pollution Mean", "Low Pollution Mean", 
+                "t-statistic", "p-value", "95% CI Lower", "95% CI Upper"),
+  Value = c(round(group_means["High"], 2),
+            round(group_means["Low"], 2),
+            round(t_test_result$statistic, 3),
+            round(t_test_result$p.value, 4),
+            round(t_test_result$conf.int[1], 3),
+            round(t_test_result$conf.int[2], 3))
+)
+
+# Display the table
+knitr::kable(results_table, caption = "T-Test Results: Asthma Rates by Pollution Level")
+
+# Create a boxplot to visualize the difference
+boxplot(Asthma ~ Pollution_Level, 
+        data = air_data,
+        main = "Asthma Rates by Pollution Level",
+        xlab = "Pollution Level", 
+        ylab = "Asthma Rate (%)",
+        col = c("lightgreen", "salmon"))
 ```
+
 
 # DISCUSSION
 
