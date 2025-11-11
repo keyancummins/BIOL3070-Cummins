@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-11-06
+2025-11-11
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -87,6 +87,56 @@ alt="Adults with Current Asthma vs. Poor-Air Days by State (ranked by Asthma %)
 Days by State (ranked by Asthma %)</figcaption>
 </figure>
 
+``` r
+# Set up side-by-side plots
+par(mfrow = c(1, 2), mar = c(5, 4, 4, 2))
+
+# Histogram with density curve for Asthma
+hist(df$asthma_pct, 
+     breaks = 15,
+     main = "Distribution of Asthma Prevalence",
+     xlab = "Adults with Current Asthma (%)",
+     ylab = "Density",
+     col = "lightblue",
+     border = "darkblue",
+     freq = FALSE,
+     xlim = c(0, max(df$asthma_pct) + 2))
+
+# Add density curve
+lines(density(df$asthma_pct), col = "darkblue", lwd = 2)
+
+# Add mean line
+abline(v = mean(df$asthma_pct), col = "red", lwd = 2, lty = 2)
+legend("topright", legend = paste("Mean:", round(mean(df$asthma_pct), 1), "%"), 
+       col = "red", lty = 2, lwd = 2, bty = "n")
+
+# Histogram with density curve for Poor Air Quality
+hist(df$poor_air_pct, 
+     breaks = 15,
+     main = "Distribution of Poor Air Quality Days",
+     xlab = "Poor Air Quality Days (%)",
+     ylab = "Density",
+     col = "lightcoral",
+     border = "darkred",
+     freq = FALSE,
+     xlim = c(0, max(df$poor_air_pct) + 5))
+
+# Add density curve
+lines(density(df$poor_air_pct), col = "darkred", lwd = 2)
+
+# Add mean line
+abline(v = mean(df$poor_air_pct), col = "red", lwd = 2, lty = 2)
+legend("topright", legend = paste("Mean:", round(mean(df$poor_air_pct), 1), "%"), 
+       col = "red", lty = 2, lwd = 2, bty = "n")
+```
+
+![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+``` r
+# Reset plotting parameters
+par(mfrow = c(1, 1))
+```
+
 # STUDY QUESTION and HYPOTHESIS
 
 ## Questions
@@ -107,22 +157,30 @@ high amounts of poor air quality days.
 
 ## 1st Analysis
 
+The first analysis utilized Simple Linear Regression to determine the
+presence, strength, and direction of a linear relationship between the
+predictor variable (Proportion of Poor Air Quality Days) and the
+response variable (Asthma Rate in percent).
+
 ``` r
 ## 1st Analysis: Linear Regression - Air Quality vs Asthma Rates
 
+# Convert Poor_Air from proportion to percentage
+air_data$Poor_Air_Percent <- air_data$Poor_Air * 100
+
 # Scatter plot with regression line
-plot(air_data$Poor_Air, air_data$Asthma,
-     xlab = "Proportion of Poor Air Quality Days",
+plot(air_data$Poor_Air_Percent, air_data$Asthma,
+     xlab = "Percentage of Poor Air Quality Days",
      ylab = "Asthma Rate (%)",
      main = "Air Quality vs Asthma Rates by State",
      pch = 16, col = "blue", cex = 1.2)
 
 # Add regression line
-model <- lm(Asthma ~ Poor_Air, data = air_data)
+model <- lm(Asthma ~ Poor_Air_Percent, data = air_data)
 abline(model, col = "red", lwd = 2)
 
 # Calculate statistics
-correlation <- cor(air_data$Poor_Air, air_data$Asthma)
+correlation <- cor(air_data$Poor_Air_Percent, air_data$Asthma)
 r_squared <- summary(model)$r.squared
 p_value <- summary(model)$coefficients[2,4]
 
@@ -139,25 +197,10 @@ regression_stats <- data.frame(
             nrow(air_data))
 )
 
-# Display model statistics
-knitr::kable(regression_stats, caption = "Linear Regression Model Summary")
-```
 
-| Statistic               |   Value |
-|:------------------------|--------:|
-| Correlation Coefficient | -0.2790 |
-| R-squared               |  0.0780 |
-| Adjusted R-squared      |  0.0590 |
-| Overall Model p-value   |  0.0497 |
-| Regression p-value      |  0.0497 |
-| Observations            | 50.0000 |
-
-Linear Regression Model Summary
-
-``` r
 # Create coefficients table
 coefficients_table <- data.frame(
-  Term = c("Intercept", "Poor Air Quality"),
+  Term = c("Intercept", "Poor Air Quality (%)"),
   Estimate = c(round(coef(model)[1], 3), round(coef(model)[2], 3)),
   Std_Error = c(round(summary(model)$coefficients[1,2], 3), 
                 round(summary(model)$coefficients[2,2], 3)),
@@ -167,17 +210,7 @@ coefficients_table <- data.frame(
               round(summary(model)$coefficients[2,4], 4))
 )
 
-knitr::kable(coefficients_table, caption = "Regression Coefficients")
-```
 
-|             | Term             | Estimate | Std_Error | t_value | p_value |
-|:------------|:-----------------|---------:|----------:|--------:|--------:|
-| (Intercept) | Intercept        |   11.560 |     0.554 |  20.873 |  0.0000 |
-| Poor_Air    | Poor Air Quality |   -4.592 |     2.281 |  -2.013 |  0.0497 |
-
-Regression Coefficients
-
-``` r
 # Add clean statistics to plot
 legend("topright", 
        legend = c(paste("r =", round(correlation, 3)),
@@ -186,74 +219,114 @@ legend("topright",
        bty = "n", cex = 0.9)
 ```
 
-![](RMarkdown-Group-Project_files/figure-gfm/scatter%20plot-1.png)<!-- -->
+![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ## 2nd Analysis
 
+The second analysis used an Independent Two-Sample T-Test to compare the
+mean asthma rates between two distinct groups of states: those with
+“High Pollution” and those with “Low Pollution.” States were grouped
+based on whether their proportion of poor air quality days fell above or
+below the median value across all 50 states.
+
 ``` r
-## 2nd Analysis: T-test comparing asthma rates between high and low pollution states
+## Pearson Correlation Analysis
 
-# Create a new variable for pollution level based on the median of Poor_Air
-air_data$Pollution_Level <- ifelse(air_data$Poor_Air > median(air_data$Poor_Air), "High", "Low")
-air_data$Pollution_Level <- factor(air_data$Pollution_Level)
+# Calculate Pearson correlation
+cor_test <- cor.test(air_data$Poor_Air, air_data$Asthma, method = "pearson")
 
-# Perform an independent two-sample t-test
-t_test_result <- t.test(Asthma ~ Pollution_Level, data = air_data)
-
-# Calculate group means
-group_means <- tapply(air_data$Asthma, air_data$Pollution_Level, mean)
-
-# Create a results table
-results_table <- data.frame(
-  Statistic = c("High Pollution Mean", "Low Pollution Mean", 
-                "t-statistic", "p-value", "95% CI Lower", "95% CI Upper"),
-  Value = c(round(group_means["High"], 2),
-            round(group_means["Low"], 2),
-            round(t_test_result$statistic, 3),
-            round(t_test_result$p.value, 4),
-            round(t_test_result$conf.int[1], 3),
-            round(t_test_result$conf.int[2], 3))
+# Create correlation results table
+correlation_table <- data.frame(
+  Statistic = c("Pearson Correlation Coefficient", 
+                "95% Confidence Interval Lower",
+                "95% Confidence Interval Upper",
+                "t-statistic",
+                "Degrees of Freedom",
+                "p-value",
+                "Sample Size"),
+  Value = c(round(cor_test$estimate, 3),
+            round(cor_test$conf.int[1], 3),
+            round(cor_test$conf.int[2], 3),
+            round(cor_test$statistic, 3),
+            cor_test$parameter,
+            ifelse(cor_test$p.value < 0.001, "< 0.001", round(cor_test$p.value, 4)),
+            nrow(air_data))
 )
 
-# Display the table
-knitr::kable(results_table, caption = "T-Test Results: Asthma Rates by Pollution Level")
+# Display correlation results
+knitr::kable(correlation_table, caption = "Pearson Correlation Analysis")
 ```
 
-| Statistic           |   Value |
-|:--------------------|--------:|
-| High Pollution Mean | 10.0700 |
-| Low Pollution Mean  | 10.8800 |
-| t-statistic         | -2.2740 |
-| p-value             |  0.0276 |
-| 95% CI Lower        | -1.5300 |
-| 95% CI Upper        | -0.0940 |
+| Statistic                       |   Value |
+|:--------------------------------|--------:|
+| Pearson Correlation Coefficient | -0.2790 |
+| 95% Confidence Interval Lower   | -0.5170 |
+| 95% Confidence Interval Upper   | -0.0010 |
+| t-statistic                     | -2.0130 |
+| Degrees of Freedom              | 48.0000 |
+| p-value                         |  0.0497 |
+| Sample Size                     | 50.0000 |
 
-T-Test Results: Asthma Rates by Pollution Level
-
-``` r
-# Create a boxplot to visualize the difference
-boxplot(Asthma ~ Pollution_Level, 
-        data = air_data,
-        main = "Asthma Rates by Pollution Level",
-        xlab = "Pollution Level", 
-        ylab = "Asthma Rate (%)",
-        col = c("lightgreen", "salmon"))
-```
-
-![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+Pearson Correlation Analysis
 
 # DISCUSSION
 
 ## Interpretation of 1st analysis
 
+The linear regression analysis produced results that directly contradict
+the initial hypothesis. The relationship between the proportion of poor
+air quality days (Poor_Air) and the adult asthma rate (Asthma) was found
+to be negative (beta = -4.592), meaning states with worse air quality
+tend to have lower asthma rates. The Pearson correlation coefficient (r
+= -0.279) indicates a weak to moderate negative correlation. Crucially,
+the regression p-value (p = 0.0497) falls just below the conventional
+0.05 significance threshold, suggesting that this negative trend is
+statistically significant. However, the R-squared value is very low at
+0.078, meaning that only about 7.8% of the variability in state asthma
+rates can be explained by this air quality metric. This lack of
+predictive power confirms that outdoor air quality is a minor factor in
+determining overall state asthma prevalence.
+
 ## Interpretation of 2nd analysis
 
 # CONCLUSION
 
+The analyses performed in this study failed to support the hypothesis
+that states with a higher number of poor air quality days have a higher
+prevalence of asthma. Instead, the data presented a statistically
+significant, yet weak, negative correlation. Specifically, the Low
+Pollution group was found to have a significantly higher mean asthma
+rate than the High Pollution group.
+
+The prediction that California (which has one of the highest proportions
+of poor air days (at 46%) would have the highest asthma prevalence was
+empirically incorrect; California has one of the lowest asthma rates
+(8.7%). Conversely, states like Rhode Island, New Hampshire, and
+Vermont, which generally have lower poor air days, report some of the
+highest asthma rates (up to 13.3%).
+
+This evidence strongly suggests that state-level outdoor air quality is
+not the dominant factor determining asthma prevalence. At this broad
+geographic scale, asthma rates are likely more strongly influenced by
+powerful confounding variables, such as:
+
+1.  Indoor Environment: Factors like poor ventilation, mold, dust, and
+    smoking within the home.
+
+2.  Climate and Geography: Humidity, temperature, and the intensity of
+    seasonal allergens.
+
+3.  Public Health Practices and Reporting: Regional differences in
+    diagnosis, health education, and public health campaigns.
+
+Future studies should use individual-level data or employ multivariate
+regression techniques that can isolate the effect of air quality while
+controlling for confounding demographic and climate variables.
+
 # REFERENCES
 
 3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-11-06.
+    such as plot() and to correct syntax errors. Accessed 2025-11-11.
 
 4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
     fixes, editing grammar and flow of text, and checking all rubric
