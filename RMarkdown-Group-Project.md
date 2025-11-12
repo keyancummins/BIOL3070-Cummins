@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-11-11
+2025-11-12
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -21,6 +21,18 @@ Keyan Cummins
 # ABSTRACT
 
 # BACKGROUND
+
+Asthma is a chronic respiratory condition characterized by inflammation
+and constriction of the airways, leading to breathing difficulties. Its
+severity varies significantly among individuals, ranging from a minor
+disease to a potentially life-threatening disease. For those with
+asthma, poor air quality can act as a trigger, exacerbating symptoms and
+increasing the frequency of attacks (Tiotiu). This relationship suggests
+that air quality may influence the geographic prevalence of asthma. We
+hypothesize that states with a greater number of poor air quality days
+will demonstrate a higher prevalence of asthma. We predict that
+California, with the most poor air quality days, will also have the
+highest asthma rates in the nation.
 
 ``` r
 # Load the data
@@ -105,10 +117,6 @@ hist(df$asthma_pct,
 # Add density curve
 lines(density(df$asthma_pct), col = "darkblue", lwd = 2)
 
-# Add mean line
-abline(v = mean(df$asthma_pct), col = "red", lwd = 2, lty = 2)
-legend("topright", legend = paste("Mean:", round(mean(df$asthma_pct), 1), "%"), 
-       col = "red", lty = 2, lwd = 2, bty = "n")
 
 # Histogram with density curve for Poor Air Quality
 hist(df$poor_air_pct, 
@@ -123,11 +131,6 @@ hist(df$poor_air_pct,
 
 # Add density curve
 lines(density(df$poor_air_pct), col = "darkred", lwd = 2)
-
-# Add mean line
-abline(v = mean(df$poor_air_pct), col = "red", lwd = 2, lty = 2)
-legend("topright", legend = paste("Mean:", round(mean(df$poor_air_pct), 1), "%"), 
-       col = "red", lty = 2, lwd = 2, bty = "n")
 ```
 
 ![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
@@ -223,12 +226,6 @@ legend("topright",
 
 ## 2nd Analysis
 
-The second analysis used an Independent Two-Sample T-Test to compare the
-mean asthma rates between two distinct groups of states: those with
-“High Pollution” and those with “Low Pollution.” States were grouped
-based on whether their proportion of poor air quality days fell above or
-below the median value across all 50 states.
-
 ``` r
 ## Pearson Correlation Analysis
 
@@ -273,20 +270,6 @@ Pearson Correlation Analysis
 
 ## Interpretation of 1st analysis
 
-The linear regression analysis produced results that directly contradict
-the initial hypothesis. The relationship between the proportion of poor
-air quality days (Poor_Air) and the adult asthma rate (Asthma) was found
-to be negative (beta = -4.592), meaning states with worse air quality
-tend to have lower asthma rates. The Pearson correlation coefficient (r
-= -0.279) indicates a weak to moderate negative correlation. Crucially,
-the regression p-value (p = 0.0497) falls just below the conventional
-0.05 significance threshold, suggesting that this negative trend is
-statistically significant. However, the R-squared value is very low at
-0.078, meaning that only about 7.8% of the variability in state asthma
-rates can be explained by this air quality metric. This lack of
-predictive power confirms that outdoor air quality is a minor factor in
-determining overall state asthma prevalence.
-
 ## Interpretation of 2nd analysis
 
 # CONCLUSION
@@ -326,7 +309,7 @@ controlling for confounding demographic and climate variables.
 # REFERENCES
 
 3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-11-11.
+    such as plot() and to correct syntax errors. Accessed 2025-11-12.
 
 4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
     fixes, editing grammar and flow of text, and checking all rubric
