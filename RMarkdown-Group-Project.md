@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-11-12
+2025-11-13
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -308,9 +308,14 @@ controlling for confounding demographic and climate variables.
 
 # REFERENCES
 
-3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-11-12.
+1.  Tiotiu AI, Novakova P, Nedeva D, Chong-Neto HJ, Novakova S,
+    Steiropoulos P, Kowal K. Impact of Air Pollution on Asthma Outcomes.
+    Int J Environ Res Public Health. 2020 Aug 27;17(17):6212. doi:
+    10.3390/ijerph17176212. PMID: 32867076; PMCID: PMC7503605.
 
-4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
+2.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
+    such as plot() and to correct syntax errors. Accessed 2025-11-13.
+
+3.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
     fixes, editing grammar and flow of text, and checking all rubric
     requirements were met.
