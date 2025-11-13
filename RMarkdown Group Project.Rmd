@@ -111,6 +111,28 @@ lines(density(df$poor_air_pct), col = "darkred", lwd = 2)
 par(mfrow = c(1, 1))
 ```
 
+```{r}
+# Shapiro-Wilk tests for normality
+shapiro_poor_air <- shapiro.test(air_data$Poor_Air)
+shapiro_asthma <- shapiro.test(air_data$Asthma)
+
+# Create results table
+normality_tests <- data.frame(
+  Variable = c("Poor Air Quality Days", "Asthma Rate"),
+  Statistic_W = c(round(shapiro_poor_air$statistic, 4), 
+                  round(shapiro_asthma$statistic, 4)),
+  P_Value = c(ifelse(shapiro_poor_air$p.value < 0.001, "< 0.001", 
+                     round(shapiro_poor_air$p.value, 4)),
+              ifelse(shapiro_asthma$p.value < 0.001, "< 0.001", 
+                     round(shapiro_asthma$p.value, 4))),
+  Normal_Distribution = c(ifelse(shapiro_poor_air$p.value > 0.05, "Yes", "No"),
+                          ifelse(shapiro_asthma$p.value > 0.05, "Yes", "No"))
+)
+
+# Display results
+knitr::kable(normality_tests, caption = "Shapiro-Wilk Normality Tests")
+```
+
 
 # STUDY QUESTION and HYPOTHESIS
 
