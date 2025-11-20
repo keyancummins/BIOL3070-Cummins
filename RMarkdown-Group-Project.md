@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-11-13
+2025-11-20
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -10,8 +10,9 @@ Keyan Cummins
   - [Hypothesis](#hypothesis)
   - [Prediction](#prediction)
 - [METHODS/RESULTS](#methodsresults)
-  - [1st Analysis](#1st-analysis)
-  - [2nd Analysis](#2nd-analysis)
+  - [1st Analysis (Linear Regression)](#1st-analysis-linear-regression)
+  - [2nd Analysis (Pearson
+    Correlation)](#2nd-analysis-pearson-correlation)
 - [DISCUSSION](#discussion)
   - [Interpretation of 1st analysis](#interpretation-of-1st-analysis)
   - [Interpretation of 2nd analysis](#interpretation-of-2nd-analysis)
@@ -20,19 +21,52 @@ Keyan Cummins
 
 # ABSTRACT
 
+This study investigates the relationship between state-level outdoor air
+quality and adult asthma prevalence across the 50 U.S. states. Using
+simple linear regression and Pearson correlation, the analysis tested
+the hypothesis that states with a higher percentage of poor air quality
+days would exhibit higher asthma rates. The data revealed a weak,
+statistically significant negative correlation (r = -0.279, p = 0.0497)
+between poor air quality days and asthma prevalence. This finding
+indicates that outdoor air quality accounts for less than 8% of the
+variability in state asthma rates and that the overall prevalence is
+more likely driven by powerful confounding factors such as indoor air
+quality, public health practices, or regional climate. The results
+reject the initial hypothesis and suggest that a simple, direct link
+between state-level outdoor air quality and asthma prevalence is not
+supported by this dataset.
+
 # BACKGROUND
 
-Asthma is a chronic respiratory condition characterized by inflammation
-and constriction of the airways, leading to breathing difficulties. Its
-severity varies significantly among individuals, ranging from a minor
-disease to a potentially life-threatening disease. For those with
-asthma, poor air quality can act as a trigger, exacerbating symptoms and
-increasing the frequency of attacks (Tiotiu). This relationship suggests
-that air quality may influence the geographic prevalence of asthma. We
-hypothesize that states with a greater number of poor air quality days
-will demonstrate a higher prevalence of asthma. We predict that
-California, with the most poor air quality days, will also have the
-highest asthma rates in the nation.
+Asthma is a lung condition that causes difficulty in breathing due to
+constricted airways in the lungs. There are many different kinds of
+asthma such as: exercise-induced asthma, occupational asthma, and
+allergy-induced asthma (Asthma). Those with occupational asthma can have
+attacks triggered by things such as gases, fumes, and dust, similar to
+that of air pollution (Asthma). Severity of the condition differs from
+person to person with some only experiencing minor symptoms while others
+can experience life-threatening challenges from the disease (Asthma).
+Asthma is a very common disease in the U.S., with about 28 million
+people in the U.S. suffering from asthma (Asthma Facts).
+
+Poor air quality can impact those who suffer from asthma by causing
+their condition to worsen and trigger attacks (Tiotiu). It has been
+found in epidemiological studies that greater levels of air pollution
+has been associated with childhood asthma and that following an
+improvement of air quality, childhood asthma incidence had lowered
+(Jama). The state with the worst air quality in the U.S. is California
+due to its high air pollution.
+
+It is believed that air quality can affect the prevalence of asthma per
+state. We hypothesize that states that have a higher amount of poor air
+quality days will have a higher prevalence of asthma. We predict that
+California will have the most poor air quality days and, because of
+that, they will also have the highest rates of asthma compared to other
+states. We took data from the United States Environmental Protection
+Agency on asthma prevelance and air quality index by state. To ensure
+the validity of our statistical approach, we utilized histograms and a
+Shapiro-Wilk test to determine if the data was normally distributed
+before proceeding with correlation and regression analysis.
 
 ``` r
 # Load the data
@@ -100,6 +134,10 @@ Days by State (ranked by Asthma %)</figcaption>
 </figure>
 
 ``` r
+# This code was edited by prompts I gave to ChatGTP
+```
+
+``` r
 # Set up side-by-side plots
 par(mfrow = c(1, 2), mar = c(5, 4, 4, 2))
 
@@ -138,6 +176,8 @@ lines(density(df$poor_air_pct), col = "darkred", lwd = 2)
 ``` r
 # Reset plotting parameters
 par(mfrow = c(1, 1))
+
+# This code was edited by prompts I gave to ChatGTP
 ```
 
 ``` r
@@ -169,6 +209,10 @@ knitr::kable(normality_tests, caption = "Shapiro-Wilk Normality Tests")
 
 Shapiro-Wilk Normality Tests
 
+``` r
+# This code was edited by prompts I gave to ChatGTP
+```
+
 # STUDY QUESTION and HYPOTHESIS
 
 ## Questions
@@ -187,7 +231,7 @@ high amounts of poor air quality days.
 
 # METHODS/RESULTS
 
-## 1st Analysis
+## 1st Analysis (Linear Regression)
 
 The first analysis utilized Simple Linear Regression to determine the
 presence, strength, and direction of a linear relationship between the
@@ -253,7 +297,15 @@ legend("topright",
 
 ![](RMarkdown-Group-Project_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-## 2nd Analysis
+``` r
+# This code was edited by prompts I gave to ChatGTP
+```
+
+## 2nd Analysis (Pearson Correlation)
+
+The second analysis utilized Pearson Correlation to formally test the
+null hypothesis that there is no linear relationship between the two
+variables.
 
 ``` r
 ## Pearson Correlation Analysis
@@ -295,56 +347,85 @@ knitr::kable(correlation_table, caption = "Pearson Correlation Analysis")
 
 Pearson Correlation Analysis
 
+``` r
+# This code was edited by prompts I gave to ChatGTP
+```
+
 # DISCUSSION
 
 ## Interpretation of 1st analysis
 
+The Simple Linear Regression analysis established a model to predict the
+Asthma Rate based on the Percentage of Poor Air Quality Days. The
+analysis revealed a Correlation Coefficient of r = -0.279, indicating a
+weak negative linear relationship. This suggests that as the percentage
+of poor air quality days increases, the asthma rate tends to slightly
+decrease. The Coefficient of Determination R^2 was 0.078, meaning that
+approximately 7.8% of the variability in asthma rates across the 50
+states can be explained by poor air quality days. Importantly, the
+Regression p-value was 0.0497, which is just below the significance
+level of alpha = 0.05. Therefore, we reject the null hypothesis,
+concluding that there is a statistically significant linear relationship
+between these variables. However, the direction of this relationship
+(negative) is the opposite of what was expected.
+
 ## Interpretation of 2nd analysis
+
+The Pearson Correlation analysis reinforced the findings from the
+regression. The Pearson correlation coefficient r = -0.279 confirmed the
+weak negative association. The calculated p-value of 0.0497 indicates
+that the result is statistically significant at the 95% confidence
+level. This means that the likelihood of observing this relationship by
+random chance (if there were truly no relationship) is less than 5%.
+Consequently, we have statistical evidence to suggest a non-zero
+correlation, but the result directly contradicts our prediction. The
+data indicate that states with higher frequencies of poor air quality
+days (like California) actually report lower percentages of adults with
+current asthma compared to states with better air quality (like Maine or
+New Hampshire).
 
 # CONCLUSION
 
-The analyses performed in this study failed to support the hypothesis
-that states with a higher number of poor air quality days have a higher
-prevalence of asthma. Instead, the data presented a statistically
-significant, yet weak, negative correlation. Specifically, the Low
-Pollution group was found to have a significantly higher mean asthma
-rate than the High Pollution group.
-
-The prediction that California (which has one of the highest proportions
-of poor air days (at 46%) would have the highest asthma prevalence was
-empirically incorrect; California has one of the lowest asthma rates
-(8.7%). Conversely, states like Rhode Island, New Hampshire, and
-Vermont, which generally have lower poor air days, report some of the
-highest asthma rates (up to 13.3%).
-
-This evidence strongly suggests that state-level outdoor air quality is
-not the dominant factor determining asthma prevalence. At this broad
-geographic scale, asthma rates are likely more strongly influenced by
-powerful confounding variables, such as:
-
-1.  Indoor Environment: Factors like poor ventilation, mold, dust, and
-    smoking within the home.
-
-2.  Climate and Geography: Humidity, temperature, and the intensity of
-    seasonal allergens.
-
-3.  Public Health Practices and Reporting: Regional differences in
-    diagnosis, health education, and public health campaigns.
-
-Future studies should use individual-level data or employ multivariate
-regression techniques that can isolate the effect of air quality while
-controlling for confounding demographic and climate variables.
+The study found a statistically significant but weak negative linear
+relationship r = -0.279, p = 0.0497 between the percentage of poor air
+quality days and adult asthma prevalence across the 50 US states. While
+the results are statistically significant, they reject the initial
+hypothesis and prediction. We predicted a positive relationship where
+poor air quality leads to higher asthma rates, but the data shows the
+opposite. These findings suggests that state-level asthma prevalence is
+likely caused by other powerful factors that may be related to the
+asthma rate, such as socioeconomic status, access to healthcare, smoking
+rates, or potentially the “healthy worker effect” where individuals with
+respiratory issues might move away from areas with known poor air
+quality. Future research should look at some of these confounding
+variables to see the trends they have.
 
 # REFERENCES
 
-1.  Tiotiu AI, Novakova P, Nedeva D, Chong-Neto HJ, Novakova S,
+1.  “Asthma.” Mayo Clinic, Mayo Foundation for Medical Education and
+    Research, 8 Mar. 2025,
+    www.mayoclinic.org/diseases-conditions/asthma/symptoms-causes/syc-20369653.
+
+2.  “Asthma Facts.” Asthma & Allergy Foundation of America, 23
+    Apr. 2025, aafa.org/asthma/asthma-facts/.
+
+3.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
+    such as plot() and to correct syntax errors. Accessed r Sys.Date().
+
+4.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
+    fixes, editing grammar and flow of text, and checking all rubric
+    requirements were met.
+
+5.  “Jama Network \| Home of Jama and the Specialty Journals of the
+    American Medical Association.” Jama Network, jamanetwork.com/.
+    Accessed 12 Nov. 2025.
+
+6.  Tiotiu AI, Novakova P, Nedeva D, Chong-Neto HJ, Novakova S,
     Steiropoulos P, Kowal K. Impact of Air Pollution on Asthma Outcomes.
     Int J Environ Res Public Health. 2020 Aug 27;17(17):6212. doi:
     10.3390/ijerph17176212. PMID: 32867076; PMCID: PMC7503605.
 
-2.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-11-13.
-
-3.  Google. (2025). Gemini (version Oct 2025). Tool used for quick
-    fixes, editing grammar and flow of text, and checking all rubric
-    requirements were met.
+7.  U.S. Environmental Protection Agency (EPA). Asthma and Outdoor Air
+    Pollution \[flyer\]. EPA-452-F-04-002. Used for background
+    information on how outdoor air pollution affects asthma and
+    suggested protective behaviors. Accessed r Sys.Date().
