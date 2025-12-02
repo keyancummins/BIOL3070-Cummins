@@ -1,7 +1,7 @@
 Group Project
 ================
 Keyan Cummins
-2025-11-20
+2025-12-02
 
 - [ABSTRACT](#abstract)
 - [BACKGROUND](#background)
@@ -9,13 +9,16 @@ Keyan Cummins
   - [Questions](#questions)
   - [Hypothesis](#hypothesis)
   - [Prediction](#prediction)
-- [METHODS/RESULTS](#methodsresults)
-  - [1st Analysis (Linear Regression)](#1st-analysis-linear-regression)
-  - [2nd Analysis (Pearson
-    Correlation)](#2nd-analysis-pearson-correlation)
+- [METHODS](#methods)
+  - [Statistical Methods](#statistical-methods)
+- [RESULTS](#results)
+  - [1st Analysis (Normality
+    Assessment)](#1st-analysis-normality-assessment)
+  - [2nd Analysis (Linear Regression)](#2nd-analysis-linear-regression)
+  - [3rd Analysis (Pearson
+    Correlation)](#3rd-analysis-pearson-correlation)
 - [DISCUSSION](#discussion)
-  - [Interpretation of 1st analysis](#interpretation-of-1st-analysis)
-  - [Interpretation of 2nd analysis](#interpretation-of-2nd-analysis)
+  - [Interpretation of Findings](#interpretation-of-findings)
 - [CONCLUSION](#conclusion)
 - [REFERENCES](#references)
 
@@ -38,35 +41,32 @@ supported by this dataset.
 
 # BACKGROUND
 
-Asthma is a lung condition that causes difficulty in breathing due to
-constricted airways in the lungs. There are many different kinds of
-asthma such as: exercise-induced asthma, occupational asthma, and
-allergy-induced asthma (Asthma). Those with occupational asthma can have
-attacks triggered by things such as gases, fumes, and dust, similar to
-that of air pollution (Asthma). Severity of the condition differs from
-person to person with some only experiencing minor symptoms while others
-can experience life-threatening challenges from the disease (Asthma).
-Asthma is a very common disease in the U.S., with about 28 million
-people in the U.S. suffering from asthma (Asthma Facts).
+Asthma is a chronic lung condition that causes difficulty in breathing
+due to inflammation and constricted airways in the lungs \[1\]. There
+are many different kinds of asthma, including exercise-induced,
+occupational, and allergy-induced asthma \[1\]. For instance,
+individuals with occupational asthma can have attacks triggered by
+exposures such as gases, fumes, and dust, which are similar to
+components found in air pollution \[1\]. The severity of the condition
+differs from person to person, with some only experiencing minor
+symptoms while others can face life-threatening challenges \[1\]. Asthma
+is a common disease in the U.S., affecting approximately 28 million
+people \[2\].
 
-Poor air quality can impact those who suffer from asthma by causing
-their condition to worsen and trigger attacks (Tiotiu). It has been
-found in epidemiological studies that greater levels of air pollution
-has been associated with childhood asthma and that following an
-improvement of air quality, childhood asthma incidence had lowered
-(Jama). The state with the worst air quality in the U.S. is California
-due to its high air pollution.
+Poor ambient air quality is known to impact those who suffer from asthma
+by causing their condition to worsen and triggering attacks \[6\].
+Epidemiological studies have found that greater levels of air pollution
+are associated with childhood asthma, and an improvement in air quality
+has been linked to a reduction in childhood asthma incidence \[5\]. It
+is believed that air quality can affect the prevalence of asthma per
+state. The state with the worst air quality in the U.S. is often cited
+as California due due to its high air pollution levels.
 
-It is believed that air quality can affect the prevalence of asthma per
-state. We hypothesize that states that have a higher amount of poor air
-quality days will have a higher prevalence of asthma. We predict that
-California will have the most poor air quality days and, because of
-that, they will also have the highest rates of asthma compared to other
-states. We took data from the United States Environmental Protection
-Agency on asthma prevelance and air quality index by state. To ensure
-the validity of our statistical approach, we utilized histograms and a
-Shapiro-Wilk test to determine if the data was normally distributed
-before proceeding with correlation and regression analysis.
+We hypothesize that states that have a higher amount of poor air quality
+days will have a higher prevalence of asthma. We predict that
+California, with its reported high levels of poor air quality days, will
+exhibit one of the highest rates of adult asthma compared to other
+states.
 
 ``` r
 # Load the data
@@ -136,6 +136,69 @@ Days by State (ranked by Asthma %)</figcaption>
 ``` r
 # This code was edited by prompts I gave to ChatGTP
 ```
+
+# STUDY QUESTION and HYPOTHESIS
+
+## Questions
+
+Does air quality effect the prevalence of asthma per state?
+
+## Hypothesis
+
+The states with the highest amounts of poor air quality days will also
+have higher prevalence of asthma.
+
+## Prediction
+
+California will have the highest prevelance of asthma because of its
+high amounts of poor air quality days.
+
+# METHODS
+
+Data Source and Sample SizeThe study utilized publicly available data
+from the United States Environmental Protection Agency (EPA) on two key
+variables for all 50 U.S. states (sample size n=50)
+
+Poor Air Quality Days (Predictor/Independent Variable): The proportion
+of days with an Air Quality Index (AQI) value above 50, indicating an
+unhealthy level of air quality for sensitive groups or the general
+population.
+
+Adult Asthma Prevalence (Response/Dependent Variable): The percentage of
+adults (aged 18+) who currently have asthma.
+
+## Statistical Methods
+
+1.  Normality Assessment To ensure the validity of the statistical
+    approach for parametric tests like Pearson correlation and simple
+    linear regression, the distribution of both the Poor Air Quality
+    Days and Asthma Prevalence variables was assessed using histograms
+    (with density curves) and the formal Shapiro-Wilk test. The null
+    hypothesis for the Shapiro-Wilk test is that the data is normally
+    distributed (alpha = 0.05).
+
+2.  Simple Linear Regression Simple Linear Regression was used to model
+    the relationship between the predictor (Poor Air Quality Days) and
+    the response (Asthma Rate). The analysis yielded the regression
+    equation, the R-squared (R^2) value (Coefficient of Determination),
+    and the regression p-value to determine the overall fit and
+    significance of the model.
+
+3.  Pearson Correlation A Pearson correlation test was performed to
+    formally test the null hypothesis that there is no linear
+    relationship between the two variables. This analysis produced the
+    Pearson correlation coefficient , a measure of the strength and
+    direction of the linear relationship, along with a 95% confidence
+    interval and a p-value for statistical significance.
+
+# RESULTS
+
+## 1st Analysis (Normality Assessment)
+
+The Shapiro-Wilk tests for normality, presented in Table 1, indicated
+that both variables could be considered normally distributed at the
+alpha = 0.05 significance level, thus meeting the assumptions for the
+planned parametric tests.
 
 ``` r
 # Set up side-by-side plots
@@ -213,30 +276,10 @@ Shapiro-Wilk Normality Tests
 # This code was edited by prompts I gave to ChatGTP
 ```
 
-# STUDY QUESTION and HYPOTHESIS
+## 2nd Analysis (Linear Regression)
 
-## Questions
-
-Does air quality effect the prevalence of asthma per state?
-
-## Hypothesis
-
-The states with the highest amounts of poor air quality days will also
-have higher prevalence of asthma.
-
-## Prediction
-
-California will have the highest prevelance of asthma because of its’
-high amounts of poor air quality days.
-
-# METHODS/RESULTS
-
-## 1st Analysis (Linear Regression)
-
-The first analysis utilized Simple Linear Regression to determine the
-presence, strength, and direction of a linear relationship between the
-predictor variable (Proportion of Poor Air Quality Days) and the
-response variable (Asthma Rate in percent).
+The regression analysis produced the following model, statistics, and
+scatter plot.
 
 ``` r
 ## 1st Analysis: Linear Regression - Air Quality vs Asthma Rates
@@ -249,7 +292,7 @@ plot(air_data$Poor_Air_Percent, air_data$Asthma,
      xlab = "Percentage of Poor Air Quality Days",
      ylab = "Asthma Rate (%)",
      main = "Air Quality vs Asthma Rates by State",
-     pch = 16, col = "blue", cex = 1.2)
+     pch = 16, col = "navyblue", cex = 1.2)
 
 # Add regression line
 model <- lm(Asthma ~ Poor_Air_Percent, data = air_data)
@@ -301,11 +344,10 @@ legend("topright",
 # This code was edited by prompts I gave to ChatGTP
 ```
 
-## 2nd Analysis (Pearson Correlation)
+## 3rd Analysis (Pearson Correlation)
 
-The second analysis utilized Pearson Correlation to formally test the
-null hypothesis that there is no linear relationship between the two
-variables.
+The formal Pearson correlation test results confirmed a weak, negative
+association between the variables.
 
 ``` r
 ## Pearson Correlation Analysis
@@ -353,36 +395,26 @@ Pearson Correlation Analysis
 
 # DISCUSSION
 
-## Interpretation of 1st analysis
+## Interpretation of Findings
 
-The Simple Linear Regression analysis established a model to predict the
-Asthma Rate based on the Percentage of Poor Air Quality Days. The
-analysis revealed a Correlation Coefficient of r = -0.279, indicating a
-weak negative linear relationship. This suggests that as the percentage
-of poor air quality days increases, the asthma rate tends to slightly
-decrease. The Coefficient of Determination R^2 was 0.078, meaning that
-approximately 7.8% of the variability in asthma rates across the 50
-states can be explained by poor air quality days. Importantly, the
-Regression p-value was 0.0497, which is just below the significance
-level of alpha = 0.05. Therefore, we reject the null hypothesis,
-concluding that there is a statistically significant linear relationship
-between these variables. However, the direction of this relationship
-(negative) is the opposite of what was expected.
+The study found a statistically significant weak negative linear
+relationship between the percentage of poor air quality days and adult
+asthma prevalence across the 50 U.S. states (r = -0.279, p = 0.0497).
+This result, while statistically significant at the alpha = 0.05 level,
+directly rejects the initial hypothesis and prediction.
 
-## Interpretation of 2nd analysis
+Our hypothesis predicted a positive correlation, suggesting that higher
+poor air quality would lead to higher asthma rates. Instead, the data
+indicates that states with a higher frequency of poor air quality days
+(like California, 46% poor air days, 8.7% asthma) tend to have slightly
+lower adult asthma prevalence rates compared to states with better air
+quality (like Maine, 8% poor air days, 13.1% asthma).
 
-The Pearson Correlation analysis reinforced the findings from the
-regression. The Pearson correlation coefficient r = -0.279 confirmed the
-weak negative association. The calculated p-value of 0.0497 indicates
-that the result is statistically significant at the 95% confidence
-level. This means that the likelihood of observing this relationship by
-random chance (if there were truly no relationship) is less than 5%.
-Consequently, we have statistical evidence to suggest a non-zero
-correlation, but the result directly contradicts our prediction. The
-data indicate that states with higher frequencies of poor air quality
-days (like California) actually report lower percentages of adults with
-current asthma compared to states with better air quality (like Maine or
-New Hampshire).
+The R^2 value of 0.078 shows that only 7.8% of the variability in
+state-level asthma rates is explained by outdoor air quality. This low
+value strongly suggests that the overall state-level asthma prevalence
+is overwhelmingly influenced by other, more powerful confounding
+factors.
 
 # CONCLUSION
 
